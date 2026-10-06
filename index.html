@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Kartu Bilangan Bulat - Pembelajaran Visual & Kuis</title>
+  <style>
+    :root {
+      --positif-color: #2e7d32;
+      --positif-bg: #e8f5e9;
+      --negatif-color: #c62828;
+      --negatif-bg: #ffebee;
+      --neutral-bg: #f5f5f5;
+      --text-dark: #212121;
+      --primary-color: #1565c0;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 26px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    /* Tab Navigasi */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid var(--primary-color);
+      background-color: white;
+      color: var(--primary-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Area Kontrol Input */
+    .control-panel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      background-color: var(--neutral-bg);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 90px;
+      padding: 8px;
+      font-size: 20px;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    select {
+      padding: 8px;
+      font-size: 20px;
+      font-weight: bold;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+    }
+
+    button.btn-action {
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button.btn-action:hover {
+      background-color: #0d47a1;
+    }
+
+    /* Visualisasi Area Kartu */
+    .board {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      min-height: 200px;
+      padding: 20px;
+      border: 3px dashed #bbb;
+      border-radius: 12px;
+      background-color: #fafafa;
+    }
+
+    .card-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    }
+
+    .row-title {
+      width: 100%;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #444;
+    }
+
+    .group-box {
+      border: 2px dashed #9e9e9e;
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      background: #fdfdfd;
+    }
+
+    /* Elemen Kartu */
+    .card {
+      width: 50px;
+      height: 65px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      font-weight: 900;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .card.positive {
+      background-color: var(--positif-bg);
+      color: var(--positif-color);
+      border: 3px solid var(--positif-color);
+    }
+
+    .card.negative {
+      background-color: var(--negatif-bg);
+      color: var(--negatif-color);
+      border: 3px solid var(--negatif-color);
+    }
+
+    .card.neutral-pair {
+      opacity: 0.3;
+      transform: scale(0.85);
+      border-style: dashed;
+    }
+
+    /* Area Hasil Visual */
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      background-color: #e3f2fd;
+      border: 2px solid #90caf9;
+    }
+
+    .result-text {
+      font-size: 26px;
+      font-weight: bold;
+      color: #0d47a1;
+    }
+
+    .explanation-text {
+      font-size: 15px;
+      color: #333;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .visual-guide {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      flex-wrap: wrap;
+    }
+
+    .guide-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-card {
+      width: 22px;
+      height: 26px;
+      border-radius: 4px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* Tampilan Kuis */
+    .quiz-card {
+      background-color: var(--neutral-bg);
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .quiz-question {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto 20px auto;
+    }
+
+    .quiz-btn {
+      padding: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      background-color: white;
+      border: 3px solid var(--primary-color);
+      color: var(--primary-color);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-btn:hover {
+      background-color: #e3f2fd;
+    }
+
+    .quiz-feedback {
+      font-size: 20px;
+      font-weight: bold;
+      min-height: 30px;
+      margin-bottom: 15px;
+    }
+
+    .score-board {
+      font-size: 18px;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🟨 MEDIA KARTU BILANGAN BULAT 🟦</h1>
+  <div class="subtitle">Penjumlahan, Pengurangan, Perkalian & Pembagian Secara Visual</div>
+
+  <!-- Navigasi Tab Mode -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tab-sim-btn" onclick="switchTab('simulasi')">Simulasi Visual</button>
+    <button class="tab-btn" id="tab-quiz-btn" onclick="switchTab('kuis')">Kuis Interaktif</button>
+  </div>
+
+  <!-- TAB 1: SIMULASI VISUAL -->
+  <div id="simulasi" class="tab-content active">
+    <!-- Petunjuk Warna -->
+    <div class="visual-guide">
+      <div class="guide-item">
+        <span class="mini-card" style="background:var(--positif-bg); color:var(--positif-color); border:2px solid var(--positif-color);">+</span>
+        <span>Kartu Positif (+1)</span>
+      </div>
+      <div class="guide-item">
+        <span class="mini-card" style="background:var(--negatif-bg); color:var(--negatif-color); border:2px solid var(--negatif-color);">-</span>
+        <span>Kartu Negatif (-1)</span>
+      </div>
+      <div class="guide-item">
+        <span>( + ) + ( - ) = 0 (Netral)</span>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Panel Input Angka -->
+    <div class="control-panel">
+      <div class="input-group">
+        <label for="num1">Bilangan 1:</label>
+        <input type="number" id="num1" value="3" min="-12" max="12">
+      </div>
+
+      <select id="operator">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">×</option>
+        <option value="/">÷</option>
+      </select>
+
+      <div class="input-group">
+        <label for="num2">Bilangan 2:</label>
+        <input type="number" id="num2" value="-2" min="-12" max="12">
+      </div>
+
+      <button class="btn-action" onclick="jalankanHitung()">HITUNG & TAMPILKAN</button>
+    </div>
+
+    <!-- Area Kartu -->
+    <div class="board" id="board">
+      <!-- Kartu akan dirender di sini via JavaScript -->
+    </div>
+
+    <!-- Kotak Hasil -->
+    <div class="result-box">
+      <div class="result-text" id="result-text">3 + (-2) = 1</div>
+      <div class="explanation-text" id="explanation-text"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: KUIS INTERAKTIF -->
+  <div id="kuis" class="tab-content">
+    <div class="quiz-card">
+      <div class="quiz-question" id="quiz-question">3 × (-2) = ?</div>
+      <div class="quiz-options" id="quiz-options">
+        <!-- Pilihan jawaban -->
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <div class="score-board">
+        Skor: <span id="score-val">0</span> | Benar: <span id="correct-val">0</span> / <span id="total-val">0</span>
+      </div>
+      <br>
+      <button class="btn-action" onclick="generateQuiz()">Soal Berikutnya</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Fungsi Pengubah Tab
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    
+    if (tabId === 'simulasi') {
+      document.getElementById('tab-sim-btn').classList.add('active');
+    } else {
+      document.getElementById('tab-quiz-btn').classList.add('active');
+      if (quizTotal === 0) {
+        generateQuiz();
+      }
+    }
+  }
+
+  // Helper pembuat elemen kartu
+  function createCardElement(isPositive, isNeutral) {
+    const card = document.createElement('div');
+    card.className = 'card ' + (isPositive ? 'positive' : 'negative') + (isNeutral ? ' neutral-pair' : '');
+    card.textContent = isPositive ? '+' : '-';
+    return card;
+  }
+
+  // Helper render sejumlah kartu ke dalam container
+  function renderCardGroup(container, count, isPositive) {
+    const absCount = Math.abs(count);
+    for (let i = 0; i < absCount; i++) {
+      container.appendChild(createCardElement(isPositive, false));
+    }
+  }
+
+  // SIMULASI MATEMATIKA VISUAL
+  function jalankanHitung() {
+    let n1 = parseInt(document.getElementById('num1').value);
+    let n2 = parseInt(document.getElementById('num2').value);
+    if (isNaN(n1)) n1 = 0;
+    if (isNaN(n2)) n2 = 0;
+
+    const op = document.getElementById('operator').value;
+    const board = document.getElementById('board');
+    const resultText = document.getElementById('result-text');
+    const expText = document.getElementById('explanation-text');
+
+    board.innerHTML = '';
+
+    // Penanganan Pembagian Nol
+    if (op === '/' && n2 === 0) {
+      resultText.textContent = n1 + " ÷ 0 = Tidak Terdefinisi";
+      expText.textContent = "Pembagian dengan nol tidak terdefinisi dalam matematika.";
+      return;
+    }
+
+    let hasil = 0;
+    const n2Disp = n2 < 0 ? "(" + n2 + ")" : n2;
+
+    // --- OPERASI 1: PENJUMLAHAN & PENGURANGAN ---
+    if (op === '+' || op === '-') {
+      let effN2 = op === '-' ? -n2 : n2;
+      hasil = n1 + effN2;
+
+      // Baris Bilangan 1
+      const row1 = document.createElement('div');
+      row1.className = 'card-row';
+      row1.innerHTML = '<div class="row-title">Bilangan Pertama: ' + n1 + '</div><div id="c-n1" style="display:flex; gap:6px; flex-wrap:wrap;"></div>';
+      board.appendChild(row1);
+      renderCardGroup(document.getElementById('c-n1'), n1, n1 >= 0);
+
+      // Baris Bilangan 2
+      const row2 = document.createElement('div');
+      row2.className = 'card-row';
+      const labelN2 = op === '-' 
+        ? 'Dioperasikan (- ' + n2Disp + ' membalik kartu menjadi ' + (effN2 >= 0 ? '+' : '') + effN2 + ')' 
+        : 'Bilangan Kedua: ' + n2Disp;
+      row2.innerHTML = '<div class="row-title">' + labelN2 + '</div><div id="c-n2" style="display:flex; gap:6px; flex-wrap:wrap;"></div>';
+      board.appendChild(row2);
+      renderCardGroup(document.getElementById('c-n2'), effN2, effN2 >= 0);
+
+      // Baris Netral & Hasil
+      const rowNetral = document.createElement('div');
+      rowNetral.className = 'card-row';
+      rowNetral.style.backgroundColor = '#f0f4c3';
+      rowNetral.innerHTML = '<div class="row-title">Proses Pasangan Netral (+ dan - saling menghilangkan = 0):</div><div id="c-netral" style="display:flex; gap:6px; flex-wrap:wrap;"></div>';
+      board.appendChild(rowNetral);
+
+      const cNetral = document.getElementById('c-netral');
+      let posCount = (n1 > 0 ? n1 : 0) + (effN2 > 0 ? effN2 : 0);
+      let negCount = (n1 < 0 ? Math.abs(n1) : 0) + (effN2 < 0 ? Math.abs(effN2) : 0);
+      let pairs = Math.min(posCount, negCount);
+
+      // Render Pasangan Netral
+      for (let i = 0; i < pairs; i++) {
+        const pairGrp = document.createElement('div');
+        pairGrp.style.display = 'flex';
+        pairGrp.style.gap = '4px';
+        pairGrp.style.padding = '3px';
+        pairGrp.style.border = '2px dashed #9e9e9e';
+        pairGrp.style.borderRadius = '6px';
+        pairGrp.appendChild(createCardElement(true, true));
+        pairGrp.appendChild(createCardElement(false, true));
+        cNetral.appendChild(pairGrp);
+      }
+
+      // Render Sisa Kartu
+      renderCardGroup(cNetral, posCount - pairs, true);
+      renderCardGroup(cNetral, negCount - pairs, false);
+
+      if (posCount === 0 && negCount === 0) {
+        cNetral.innerHTML = '<em>Hasil adalah 0 (Tidak ada kartu)</em>';
+      }
+
+      const opSymbol = op === '-' ? '-' : '+';
+      resultText.textContent = n1 + " " + opSymbol + " " + n2Disp + " = " + hasil;
+      expText.textContent = op === '-' 
+        ? "Mengurangi " + n2Disp + " sama dengan menambahkan lawannya. Kartu disatukan lalu pasangan netral saling menghilangkan." 
+        : "Kartu dikumpulkan. Kartu positif dan negatif berpasangan menjadi netral (0), sisanya adalah hasil akhir.";
+    }
+
+    // --- OPERASI 2: PERKALIAN ---
+    else if (op === '*') {
+      hasil = n1 * n2;
+      const absN1 = Math.abs(n1);
+      const isN1Neg = n1 < 0;
+
+      const mainRow = document.createElement('div');
+      mainRow.className = 'card-row';
+      const ketNeg = isN1Neg ? ' (Lalu Membalik Warna/Tanda karena Bilangan Utama Negatif)' : '';
+      mainRow.innerHTML = '<div class="row-title">Konsep Visual: Membuat ' + absN1 + ' Kelompok @ ' + n2 + ' Kartu' + ketNeg + '</div><div id="c-mul" style="display:flex; gap:12px; flex-wrap:wrap;"></div>';
+      board.appendChild(mainRow);
+
+      const cMul = document.getElementById('c-mul');
+
+      for (let g = 0; g < absN1; g++) {
+        const grp = document.createElement('div');
+        grp.className = 'group-box';
+        let isCardPos = isN1Neg ? (n2 < 0) : (n2 >= 0);
+        renderCardGroup(grp, Math.abs(n2), isCardPos);
+        cMul.appendChild(grp);
+      }
+
+      if (n1 === 0 || n2 === 0) {
+        cMul.innerHTML = '<em>Kelompok atau isi kartu adalah 0 (Hasil = 0)</em>';
+      }
+
+      resultText.textContent = n1 + " × " + n2Disp + " = " + hasil;
+      expText.textContent = "Perkalian " + n1 + " × " + n2Disp + " berarti membuat " + absN1 + " kelompok berisi " + Math.abs(n2) + " kartu. " + (isN1Neg ? "Karena pengali negatif (-), warna/muatan semua kartu dibalik!" : "");
+    }
+
+    // --- OPERASI 3: PEMBAGIAN ---
+    else if (op === '/') {
+      hasil = n1 / n2;
+      const isInteger = Number.isInteger(hasil);
+
+      const absN1 = Math.abs(n1);
+      const absN2 = Math.abs(n2);
+      const isResultPos = hasil >= 0;
+
+      const mainRow = document.createElement('div');
+      mainRow.className = 'card-row';
+      mainRow.innerHTML = '<div class="row-title">Konsep Visual: Membagi Total ' + absN1 + ' Kartu Ke Dalam Kelompok Berisi ' + absN2 + ' Kartu</div><div id="c-div" style="display:flex; gap:12px; flex-wrap:wrap;"></div>';
+      board.appendChild(mainRow);
+
+      const cDiv = document.getElementById('c-div');
+
+      if (isInteger) {
+        const totalGroups = Math.abs(hasil);
+        for (let g = 0; g < totalGroups; g++) {
+          const grp = document.createElement('div');
+          grp.className = 'group-box';
+          renderCardGroup(grp, absN2, isResultPos);
+          cDiv.appendChild(grp);
+        }
+        if (n1 === 0) {
+          cDiv.innerHTML = '<em>0 kartu dibagi = 0 kelompok</em>';
+        }
+      } else {
+        cDiv.innerHTML = '<em>Visualisasi kelompok penuh untuk hasil pecahan (' + hasil.toFixed(2) + ')</em>';
+      }
+
+      resultText.textContent = n1 + " ÷ " + n2Disp + " = " + (isInteger ? hasil : hasil.toFixed(2));
+      expText.textContent = "Pembagian " + n1 + " ÷ " + n2Disp + " mencari berapa banyak kelompok berisi " + absN2 + " kartu yang bisa dibentuk dari total " + absN1 + " kartu. Aturan tanda: Tanda sama menghasilkan positif (+), tanda berbeda menghasilkan negatif (-).";
+    }
+  }
+
+  // MODUL KUIS INTERAKTIF
+  let currentAnswer = 0;
+  let score = 0;
+  let quizCorrect = 0;
+  let quizTotal = 0;
+
+  function generateQuiz() {
+    document.getElementById('quiz-feedback').textContent = '';
+    document.getElementById('quiz-feedback').style.color = '';
+
+    const ops = ['+', '-', '*', '/'];
+    const selectedOp = ops[Math.floor(Math.random() * ops.length)];
+
+    let a = Math.floor(Math.random() * 21) - 10;
+    let b = Math.floor(Math.random() * 21) - 10;
+
+    if (selectedOp === '/') {
+      while (b === 0) b = Math.floor(Math.random() * 21) - 10;
+      let mul = a * b;
+      a = mul;
+      if (a > 50 || a < -50) {
+        a = b * (Math.floor(Math.random() * 11) - 5);
+      }
+    }
+
+    let opSymbol = selectedOp;
+    if (selectedOp === '+') currentAnswer = a + b;
+    else if (selectedOp === '-') currentAnswer = a - b;
+    else if (selectedOp === '*') { currentAnswer = a * b; opSymbol = '×'; }
+    else if (selectedOp === '/') { currentAnswer = a / b; opSymbol = '÷'; }
+
+    const bDisp = b < 0 ? "(" + b + ")" : b;
+    document.getElementById('quiz-question').textContent = a + " " + opSymbol + " " + bDisp + " = ?";
+
+    let options = [currentAnswer];
+    while (options.length < 4) {
+      let wrong = currentAnswer + (Math.floor(Math.random() * 11) - 5);
+      if (!options.includes(wrong) && !isNaN(wrong)) {
+        options.push(wrong);
+      }
+    }
+
+    options.sort(() => Math.random() - 0.5);
+
+    const optionsContainer = document.getElementById('quiz-options');
+    optionsContainer.innerHTML = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-btn';
+      btn.textContent = opt;
+      btn.onclick = function() { checkQuiz(opt, btn); };
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function checkQuiz(selected, btn) {
+    const feedback = document.getElementById('quiz-feedback');
+    const allBtns = document.querySelectorAll('.quiz-btn');
+    
+    allBtns.forEach(b => b.disabled = true);
+
+    quizTotal++;
+    if (selected === currentAnswer) {
+      score += 10;
+      quizCorrect++;
+      feedback.textContent = '🎉 Benar sekali!';
+      feedback.style.color = 'green';
+      btn.style.backgroundColor = '#c8e6c9';
+    } else {
+      feedback.textContent = '❌ Salah. Jawaban yang benar adalah ' + currentAnswer;
+      feedback.style.color = '#c62828';
+      btn.style.backgroundColor = '#ffcdd2';
+    }
+
+    document.getElementById('score-val').textContent = score;
+    document.getElementById('correct-val').textContent = quizCorrect;
+    document.getElementById('total-val').textContent = quizTotal;
+  }
+
+  // Tampilkan simulasi awal saat halaman pertama kali dibuka
+  jalankanHitung();
+</script>
+
+</body>
+</html>
